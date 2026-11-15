@@ -7,7 +7,7 @@ import { MobileMenu } from './MobileMenu'
 
 export function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/0 transition-all duration-500 [html[data-scrolled]_&]:border-white/10 [html[data-scrolled]_&]:bg-night-950/80 [html[data-scrolled]_&]:shadow-2xl [html[data-scrolled]_&]:shadow-night-950/30 [html[data-scrolled]_&]:backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/0 transition-all duration-500 [html[data-scrolled]_&]:border-white/10 [html[data-scrolled]_&]:bg-night-950/95 [html[data-scrolled]_&]:shadow-lg [html[data-scrolled]_&]:shadow-night-950/30 lg:[html[data-scrolled]_&]:bg-night-950/80 lg:[html[data-scrolled]_&]:backdrop-blur-xl">
       <div className="container-x flex h-20 items-center justify-between gap-4">
         <Link href="/" className="shrink-0" aria-label="Muaz IT, naar de homepage">
           <Logo dark />

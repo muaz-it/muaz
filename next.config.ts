@@ -10,6 +10,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Dev-server ook bereikbaar vanaf telefoon/tablet op het lokale netwerk (anders laadt JS niet)
+  allowedDevOrigins: ['192.168.*.*', '10.*.*.*', '172.*.*.*', '*.local'],
   poweredByHeader: false,
   images: {
     formats: ['image/avif', 'image/webp'],

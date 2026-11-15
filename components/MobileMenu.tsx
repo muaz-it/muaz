@@ -20,6 +20,8 @@ export function MobileMenu() {
     if (!d) return
     if (open && !d.open) d.showModal()
     if (!open && d.open) d.close()
+    // iOS scrolt anders de pagina achter het menu mee
+    document.documentElement.style.overflow = open ? 'hidden' : ''
   }, [open])
 
   return (

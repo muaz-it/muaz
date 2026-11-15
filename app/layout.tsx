@@ -32,8 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="nl" className={`${inter.variable} ${jakarta.variable}`} suppressHydrationWarning>
       <head>
-        {/* Zet .js vóór de eerste paint, zodat scroll-animaties alleen verbergen als JS draait. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* Zet .js vóór de eerste paint, zodat scroll-animaties alleen verbergen als JS draait.
+            Vangnet: start React niet binnen 2,5 s (traag netwerk, geblokkeerd script), dan wordt alles gewoon getoond. */}
+        <script dangerouslySetInnerHTML={{ __html: "var d=document.documentElement;d.classList.add('js');setTimeout(function(){if(!d.classList.contains('fx'))d.classList.remove('js')},2500)" }} />
       </head>
       <body className="flex min-h-dvh flex-col">
         <a href="#inhoud" className="sr-only z-[60] rounded-xl bg-white px-4 py-3 font-bold text-night-950 focus:not-sr-only focus:fixed focus:top-4 focus:left-4">

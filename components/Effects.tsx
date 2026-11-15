@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 
 /**
  * Lichte, globale effecten zonder extra libraries:
- * - scroll-reveal voor elk element met [data-reveal]
+ * - scroll-reveal voor elk element met [data-reveal] (robuust bij snel swipen)
  * - spotlight-gloed die de muis volgt op .spotlight-elementen
  * - header krijgt data-scrolled zodra de pagina scrolt
  */
@@ -13,28 +13,39 @@ export function Effects() {
   const pathname = usePathname()
 
   useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)')
-    if (!('IntersectionObserver' in window)) {
-      els.forEach((el) => el.classList.add('is-visible'))
-      return
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            e.target.classList.add('is-visible')
-            io.unobserve(e.target)
-          }
+    const root = document.documentElement
+    root.classList.add('fx')
+    // Alles wat boven of in beeld staat wordt getoond. Ook elementen die bij een snelle swipe
+    // in één frame zijn overgeslagen (IntersectionObserver mist die op mobiel).
+    let pending = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)'))
+    let frame = 0
+    const check = () => {
+      frame = 0
+      const limit = window.innerHeight * 0.92
+      pending = pending.filter((el) => {
+        if (el.getBoundingClientRect().top < limit) {
+          el.classList.add('is-visible')
+          return false
         }
-      },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
-    )
-    els.forEach((el) => io.observe(el))
-    return () => io.disconnect()
+        return true
+      })
+      if (!pending.length) stop()
+    }
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(check) }
+    const stop = () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (frame) cancelAnimationFrame(frame)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    check()
+    return stop
   }, [pathname])
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return // geen werk tijdens touch-scrollen
       const el = (e.target as Element | null)?.closest<HTMLElement>('.spotlight')
       if (!el) return
       const r = el.getBoundingClientRect()
